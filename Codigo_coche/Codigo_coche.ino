@@ -11,7 +11,7 @@
  * seconds, then left turn for 5 seconds then right turn for 5 seconds then stop. 
  * 
  */
- Serial.println("Prueba para github");
+ 
 #include "configuration.h"
 #include <Ultrasonic.h>
 
@@ -89,17 +89,17 @@ void init_GPIO()
 	stop_Stop();
 }
 
-void advance(int disR){
+void advance(int disR,int disD, int disI){
   if(disR > distA){
     go_Advance();
     Serial.println("Puedo ir hacia adelante");
-    
+    correccion(disD, disI, disR);
   }else{
     stop_Stop();
   }
 }
 
-void canTurn(int disD,int disI){
+void canTurn(int disD,int disI,int disR){
 
   if(disD > distD){
     delay(500);
@@ -115,7 +115,7 @@ void canTurn(int disD,int disI){
     Serial.println("Avanzo un poco");
     delay(1000);
   
-  }else if(disI > distI){
+  }else if(disD < distD && disR < distA && disI > distI){
     delay(500);
     //stop_Stop();
     Serial.println("Me paro");
@@ -128,9 +128,44 @@ void canTurn(int disD,int disI){
     //go_Advance();
     Serial.println("Avanzo un poco");
     delay(1000);
+  }else{
+    go_Right();
+    delay(2200);
+    go_Advance();
   }
-  
 }
+
+void correccion(int disD, int disI, int disR){
+  if(disD > disI){
+    go_Advance();
+  delay(500);
+    go_Right();
+  delay(300);
+    go_Advance();
+  delay(500);
+    go_Left();
+  delay(300);
+    go_Advance();
+  delay(500);
+    correccion(disD, disI, disR);
+  }else if (disI > disD){
+    go_Advance();
+  delay(500);
+    go_Left();
+  delay(300);
+    go_Advance();
+  delay(500);
+    go_Right();
+  delay(300);
+    go_Advance();
+  delay(500);
+    correccion(disD, disI, disR);
+  }else {
+    go_Advance();
+  }
+ 
+}
+
  
 void setup()
 {
@@ -148,7 +183,7 @@ void loop()
   disI = sensorIzquierdo.Ranging(CM);
   Serial.println(disI);
   
-  advance(disR);
+  advance(disR,disD,disI);
   canTurn(disD,disI);
 
   
