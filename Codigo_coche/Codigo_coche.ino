@@ -11,7 +11,7 @@
  * seconds, then left turn for 5 seconds then right turn for 5 seconds then stop. 
  * 
  */
- 
+ Serial.println("Prueba para github");
 #include "configuration.h"
 #include <Ultrasonic.h>
 
